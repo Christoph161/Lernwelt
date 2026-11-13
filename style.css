@@ -1,0 +1,307 @@
+/* Lernwelt – Gestaltung */
+
+:root {
+  --blau: #1d4f91;
+  --blau-dunkel: #153a6b;
+  --blau-hell: #e8eef8;
+  --hintergrund: #f4f6fa;
+  --flaeche: #ffffff;
+  --text: #1b2430;
+  --text-leise: #4f5b6b;
+  --rand: #c9d2df;
+
+  --gruen: #1b6e36;
+  --gruen-hell: #e3f3e8;
+  --rot: #b02a20;
+  --rot-hell: #fce9e7;
+  --gelb-hell: #fff6d6;
+  --gelb-rand: #e0c46a;
+
+  --fokus: #f2a900;
+  --radius: 10px;
+  color-scheme: light;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+body {
+  margin: 0;
+  background: var(--hintergrund);
+  color: var(--text);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  font-size: 1.0625rem;
+  line-height: 1.5;
+  overflow-wrap: break-word;
+}
+
+/* ---------- Kopfzeile ---------- */
+.kopf {
+  background: var(--blau);
+  color: #fff;
+}
+
+.kopf-innen {
+  max-width: 40rem;
+  margin: 0 auto;
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.marke {
+  font-weight: 700;
+  font-size: 1.25rem;
+  letter-spacing: 0.02em;
+}
+
+/* ---------- Inhalt ---------- */
+.inhalt {
+  max-width: 40rem;
+  margin: 0 auto;
+  padding: 24px 16px 48px;
+}
+
+h1 {
+  font-size: 1.5rem;
+  line-height: 1.3;
+  margin: 0 0 12px;
+}
+
+h1:focus {
+  outline: none;
+}
+
+.einleitung {
+  color: var(--text-leise);
+  margin: 0 0 24px;
+}
+
+.hinweis {
+  max-width: 40rem;
+  margin: 12px auto 0;
+  padding: 12px 16px;
+  background: var(--gelb-hell);
+  border: 1px solid var(--gelb-rand);
+  border-radius: var(--radius);
+}
+
+@media (max-width: 40rem) {
+  .hinweis {
+    margin: 12px 16px 0;
+  }
+}
+
+/* ---------- Knöpfe ---------- */
+.knopf {
+  display: block;
+  width: 100%;
+  min-height: 48px;
+  padding: 12px 16px;
+  border: 2px solid transparent;
+  border-radius: var(--radius);
+  font: inherit;
+  font-weight: 600;
+  text-align: center;
+  cursor: pointer;
+}
+
+.knopf-haupt {
+  background: var(--blau);
+  color: #fff;
+}
+
+.knopf-haupt:hover {
+  background: var(--blau-dunkel);
+}
+
+.knopf-zweit {
+  background: var(--flaeche);
+  color: var(--blau);
+  border-color: var(--blau);
+}
+
+.knopf-zweit:hover {
+  background: var(--blau-hell);
+}
+
+.knopf-leise {
+  background: transparent;
+  color: var(--text-leise);
+  border-color: var(--rand);
+  font-weight: 400;
+}
+
+.knopf-leise:hover {
+  background: var(--flaeche);
+}
+
+.knopf-kopf {
+  width: auto;
+  min-height: 44px;
+  background: transparent;
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.6);
+}
+
+.knopf-kopf:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+button:focus-visible {
+  outline: 3px solid var(--fokus);
+  outline-offset: 2px;
+}
+
+.knopf-liste {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.start-unten {
+  margin-top: 48px;
+}
+
+.meldung {
+  min-height: 1.5em;
+  margin: 8px 0 0;
+  color: var(--gruen);
+}
+
+/* ---------- Frage ---------- */
+.frage-info {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 4px 12px;
+  margin: 0 0 8px;
+  color: var(--text-leise);
+  font-size: 0.9375rem;
+}
+
+.frage-bereich {
+  font-weight: 600;
+  color: var(--blau);
+}
+
+.frage-text {
+  font-size: 1.25rem;
+  margin-bottom: 20px;
+}
+
+.antwort {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  width: 100%;
+  min-height: 48px;
+  padding: 12px 14px;
+  background: var(--flaeche);
+  color: var(--text);
+  border: 2px solid var(--rand);
+  border-radius: var(--radius);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.antwort:hover:not(:disabled) {
+  border-color: var(--blau);
+  background: var(--blau-hell);
+}
+
+.antwort:disabled {
+  cursor: default;
+  opacity: 1;
+  color: var(--text);
+}
+
+.antwort-zeichen {
+  flex: 0 0 1.25em;
+  font-weight: 700;
+  text-align: center;
+}
+
+.antwort-text {
+  flex: 1;
+}
+
+.antwort.ist-richtig {
+  border-color: var(--gruen);
+  background: var(--gruen-hell);
+}
+
+.antwort.ist-richtig .antwort-zeichen {
+  color: var(--gruen);
+}
+
+.antwort.ist-falsch {
+  border-color: var(--rot);
+  background: var(--rot-hell);
+}
+
+.antwort.ist-falsch .antwort-zeichen {
+  color: var(--rot);
+}
+
+.antwort.ist-gewaehlt {
+  border-width: 3px;
+  font-weight: 600;
+}
+
+/* ---------- Rückmeldung ---------- */
+.feedback {
+  margin-top: 20px;
+  padding: 16px;
+  background: var(--flaeche);
+  border: 1px solid var(--rand);
+  border-radius: var(--radius);
+}
+
+.feedback-ergebnis {
+  margin: 0 0 8px;
+  font-size: 1.125rem;
+  font-weight: 700;
+}
+
+.feedback-ergebnis.ist-richtig {
+  color: var(--gruen);
+}
+
+.feedback-ergebnis.ist-falsch {
+  color: var(--rot);
+}
+
+.feedback-erklaerung {
+  margin: 0 0 16px;
+}
+
+/* ---------- Rundenende ---------- */
+.ende-ergebnis {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--blau);
+  margin: 8px 0;
+}
+
+/* Nur für Screenreader sichtbar */
+.nur-vorlesen {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}

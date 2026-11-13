@@ -3,9 +3,72 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lernwelt</title>
+  <title>Lernwelt – Prüfungstrainer Bankkaufleute</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>Hallo</h1>
+  <header class="kopf">
+    <div class="kopf-innen">
+      <span class="marke">Lernwelt</span>
+      <button type="button" id="btn-home" class="knopf knopf-kopf">Start</button>
+    </div>
+  </header>
+
+  <div id="hinweis-speicher" class="hinweis" role="status" hidden>
+    Dein Fortschritt wird in diesem Browser nicht gespeichert (zum Beispiel im privaten Modus). Du kannst trotzdem üben.
+  </div>
+
+  <main class="inhalt">
+    <!-- Startseite -->
+    <section id="ansicht-start" class="ansicht">
+      <h1 tabindex="-1">Prüfungstrainer für Bankkaufleute</h1>
+      <p class="einleitung">
+        Übe für Teil 2 der Abschlussprüfung. Zu jeder Antwort bekommst du sofort eine Erklärung.
+      </p>
+      <button type="button" id="btn-ueben" class="knopf knopf-haupt">Üben</button>
+
+      <div class="start-unten">
+        <button type="button" id="btn-reset" class="knopf knopf-leise">Fortschritt zurücksetzen</button>
+        <p id="reset-meldung" class="meldung" role="status"></p>
+      </div>
+    </section>
+
+    <!-- Bereich wählen -->
+    <section id="ansicht-bereich" class="ansicht" hidden>
+      <h1 tabindex="-1">Was möchtest du üben?</h1>
+      <div id="bereich-liste" class="knopf-liste"></div>
+    </section>
+
+    <!-- Frage -->
+    <section id="ansicht-frage" class="ansicht" hidden>
+      <p class="frage-info">
+        <span id="frage-zaehler"></span>
+        <span id="frage-bereich" class="frage-bereich"></span>
+      </p>
+      <h1 id="frage-text" class="frage-text" tabindex="-1"></h1>
+      <div id="antworten" class="knopf-liste"></div>
+
+      <div id="feedback" class="feedback" hidden>
+        <p id="feedback-ergebnis" class="feedback-ergebnis"></p>
+        <p id="feedback-erklaerung" class="feedback-erklaerung"></p>
+        <button type="button" id="btn-weiter" class="knopf knopf-haupt"
+                aria-describedby="feedback-ergebnis feedback-erklaerung">Weiter</button>
+      </div>
+    </section>
+
+    <!-- Rundenende -->
+    <section id="ansicht-ende" class="ansicht" hidden>
+      <h1 tabindex="-1">Runde geschafft!</h1>
+      <p id="ende-ergebnis" class="ende-ergebnis"></p>
+      <p id="ende-text" class="einleitung"></p>
+      <div class="knopf-liste">
+        <button type="button" id="btn-nochmal" class="knopf knopf-haupt">Nochmal</button>
+        <button type="button" id="btn-zurueck" class="knopf knopf-zweit">Zur Startseite</button>
+      </div>
+    </section>
+  </main>
+
+  <script src="fragen.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>
