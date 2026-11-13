@@ -17,6 +17,7 @@
   --gruen-hell: #e3f3e8;
   --rot: #9e1a1a;
   --rot-hell: #fbe4e4;
+  --gelb: #d4a000;
   --gelb-hell: #fff6d6;
   --gelb-rand: #e0c46a;
 
@@ -456,6 +457,110 @@ button:focus-visible {
 
 .auswertung-erklaerung {
   color: var(--text-leise);
+}
+
+/* ---------- Fortschritts-Dashboard ---------- */
+.statistik {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.statistik-karte {
+  padding: 14px 16px;
+  background: var(--flaeche);
+  border: 1px solid var(--rand);
+  border-radius: var(--radius);
+}
+
+.statistik-karte p {
+  margin: 0 0 6px;
+}
+
+.statistik-karte .klein {
+  margin-bottom: 0;
+}
+
+.statistik-karte .knopf {
+  margin-top: 12px;
+}
+
+.statistik-karte.ist-schwaechster {
+  border: 3px solid var(--haupt);
+}
+
+.etikett {
+  display: inline-block;
+  padding: 2px 10px;
+  background: var(--haupt);
+  color: #fff;
+  border-radius: 999px;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.statistik-name {
+  font-weight: 700;
+}
+
+.balken {
+  height: 12px;
+  margin: 6px 0 8px;
+  background: var(--neutral-hell);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.balken-fuellung {
+  height: 100%;
+  border-radius: 999px;
+}
+
+.balken-fuellung.ist-rot {
+  background: var(--rot);
+}
+
+.balken-fuellung.ist-gelb {
+  background: var(--gelb);
+}
+
+.balken-fuellung.ist-gruen {
+  background: var(--gruen);
+}
+
+.pruefungs-liste {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  background: var(--flaeche);
+  border: 1px solid var(--rand);
+  border-radius: var(--radius);
+}
+
+.pruefungs-liste li {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 4px 12px;
+  padding: 10px 14px;
+  border-top: 1px solid var(--neutral-hell);
+}
+
+.pruefungs-liste li:first-child {
+  border-top: 0;
+}
+
+.pruefung-datum {
+  color: var(--text-leise);
+  font-variant-numeric: tabular-nums;
+}
+
+.pruefung-wert {
+  font-weight: 600;
+}
+
+.abstand-oben {
+  margin-top: 24px;
 }
 
 /* Nur für Screenreader sichtbar */

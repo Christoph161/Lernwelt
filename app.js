@@ -570,6 +570,124 @@
     zeigeAnsicht("pruefung-ergebnis");
   }
 
+  // ---------- Fortschritts-Dashboard ----------
+  function berechneBereich(key) {
+    const fragen = FRAGEN.filter((f) => f.bereich === key);
+    let bearbeitet = 0;
+    let richtig = 0;
+    fragen.forEach((f) => {
+      const e = fortschritt.fragen[f.id];
+      if (!e) return;
+      bearbeitet++;
+      if (e.zuletztRichtig) richtig++;
+    });
+    return {
+      key: key,
+      gesamt: fragen.length,
+      bearbeitet: bearbeitet,
+      richtig: richtig,
+      anteil: bearbeitet > 0 ? richtig / bearbeitet : null
+    };
+  }
+
+  // Bereich mit dem kleinsten Anteil. Bei Gleichstand gewinnt der erste in BEREICHE.
+  function schwaechsterBereich(statistiken) {
+    let schwach = null;
+    statistiken.forEach((s) => {
+      if (s.anteil === null) return;
+      if (schwach === null || s.anteil < schwach.anteil) schwach = s;
+    });
+    return schwach ? schwach.key : null;
+  }
+
+  function stufe(prozent) {
+    if (prozent < 50) return { klasse: "rot", text: "ausbaufähig" };
+    if (prozent < 80) return { klasse: "gelb", text: "mittel" };
+    return { klasse: "gruen", text: "gut" };
+  }
+
+  function notenText(note) {
+    const eintrag = NOTEN.find((n) => n[1] === note);
+    return eintrag ? eintrag[2] : "";
+  }
+
+  function formatiereDatum(iso) {
+    const d = new Date(iso);
+    if (isNaN(d.getTime())) return "–";
+    return d.toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit", year: "numeric" });
+  }
+
+  function zeigeFortschritt() {
+    const statistiken = BEREICHE.map((b) => berechneBereich(b.key));
+    const schwach = schwaechsterBereich(statistiken);
+
+    const box = el("bereich-statistik");
+    box.replaceChildren();
+    statistiken.forEach((s) => {
+      const karte = document.createElement("div");
+      karte.className = "statistik-karte";
+      karte.dataset.bereich = s.key;
+
+      if (s.key === schwach) {
+        karte.classList.add("ist-schwaechster");
+        karte.appendChild(zeile("etikett", "Hier lohnt sich Üben am meisten"));
+      }
+      karte.appendChild(zeile("statistik-name", bereichName(s.key)));
+
+      const balken = document.createElement("div");
+      balken.className = "balken";
+      balken.setAttribute("aria-hidden", "true");
+      const fuellung = document.createElement("div");
+      fuellung.className = "balken-fuellung";
+
+      const info = document.createElement("p");
+      info.className = "statistik-zeile";
+      if (s.anteil === null) {
+        fuellung.style.width = "0";
+        info.textContent = "Noch nicht geübt";
+      } else {
+        const prozent = Math.round(s.anteil * 100);
+        const st = stufe(prozent);
+        fuellung.style.width = prozent + "%";
+        fuellung.classList.add("ist-" + st.klasse);
+        const zahl = document.createElement("strong");
+        zahl.textContent = prozent + " % richtig";
+        info.append(zahl, " · " + st.text);
+      }
+      balken.appendChild(fuellung);
+      karte.append(balken, info);
+      karte.appendChild(zeile("klein", s.bearbeitet + " von " + s.gesamt + " Fragen bearbeitet"));
+
+      if (s.key === schwach) {
+        karte.appendChild(erstelleKnopf("Jetzt üben", "knopf-haupt", () => starteRunde(s.key)));
+      }
+      box.appendChild(karte);
+    });
+
+    const liste = el("pruefungs-liste");
+    liste.replaceChildren();
+    if (fortschritt.pruefungen.length === 0) {
+      liste.appendChild(zeile("klein", "Noch keine Prüfung gemacht."));
+    } else {
+      const ol = document.createElement("ol");
+      ol.className = "pruefungs-liste";
+      fortschritt.pruefungen.forEach((p) => {
+        const li = document.createElement("li");
+        const datum = document.createElement("span");
+        datum.className = "pruefung-datum";
+        datum.textContent = formatiereDatum(p.datum);
+        const wert = document.createElement("span");
+        wert.className = "pruefung-wert";
+        wert.textContent = p.punkte + " Punkte · Note " + p.note + " – " + notenText(p.note);
+        li.append(datum, wert);
+        ol.appendChild(li);
+      });
+      liste.appendChild(ol);
+    }
+
+    zeigeAnsicht("fortschritt");
+  }
+
   function zurStartseite() {
     if (pruefung) {
       if (!window.confirm("Prüfung wirklich abbrechen? Sie wird nicht gewertet.")) return;
@@ -594,6 +712,8 @@
   el("btn-abgeben").addEventListener("click", () => pruefungAbgeben(false));
   el("btn-neue-pruefung").addEventListener("click", startePruefung);
   el("btn-ergebnis-start").addEventListener("click", () => zeigeStart());
+  el("btn-fortschritt").addEventListener("click", zeigeFortschritt);
+  el("btn-fortschritt-start").addEventListener("click", () => zeigeStart());
   el("btn-ueben").addEventListener("click", () => zeigeAnsicht("bereich"));
   el("btn-reset").addEventListener("click", fortschrittZuruecksetzen);
   btnWeiter.addEventListener("click", weiter);

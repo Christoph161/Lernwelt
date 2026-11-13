@@ -32,6 +32,7 @@
         <button type="button" id="btn-ueben" class="knopf knopf-haupt">Üben</button>
         <button type="button" id="btn-pruefung" class="knopf knopf-zweit"
                 aria-describedby="pruefung-info">Prüfung simulieren</button>
+        <button type="button" id="btn-fortschritt" class="knopf knopf-zweit">Mein Fortschritt</button>
       </div>
       <p id="pruefung-info" class="klein">Prüfung: 15 Fragen · 15 Minuten · mit Note</p>
 
@@ -103,6 +104,21 @@
 
       <h2 class="auswertung-titel">Auswertung</h2>
       <ol id="auswertung" class="auswertung"></ol>
+    </section>
+
+    <!-- Fortschritts-Dashboard -->
+    <section id="ansicht-fortschritt" class="ansicht" hidden>
+      <h1 tabindex="-1">Mein Fortschritt</h1>
+      <p class="einleitung">Gezählt wird pro Frage deine letzte Antwort. Wer sich verbessert, sieht das sofort.</p>
+
+      <div id="bereich-statistik" class="statistik"></div>
+
+      <h2 class="auswertung-titel">Letzte Prüfungen</h2>
+      <div id="pruefungs-liste"></div>
+
+      <div class="knopf-liste abstand-oben">
+        <button type="button" id="btn-fortschritt-start" class="knopf knopf-zweit">Zur Startseite</button>
+      </div>
     </section>
 
     <!-- Rundenende -->
