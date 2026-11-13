@@ -9,6 +9,21 @@
   const SPEICHER_SCHLUESSEL = "lernwelt-fortschritt";
   const DATEN_VERSION = 1;
 
+  const PRUEFUNG_PRO_BEREICH = 5; // Fragen pro Bereich in der Prüfung
+  const PRUEFUNG_MINUTEN = 15;
+  const KNAPP_MS = 60 * 1000; // ab hier wird der Timer rot
+  const MAX_PRUEFUNGEN = 5; // so viele Ergebnisse werden gespeichert
+
+  // IHK-Punkteschlüssel: [ab Punkte, Note, Text]
+  const NOTEN = [
+    [92, 1, "sehr gut"],
+    [81, 2, "gut"],
+    [67, 3, "befriedigend"],
+    [50, 4, "ausreichend"],
+    [30, 5, "mangelhaft"],
+    [0, 6, "ungenügend"]
+  ];
+
   // ---------- Elemente ----------
   const el = (id) => document.getElementById(id);
 
@@ -112,7 +127,14 @@
           };
         }
       });
-      if (Array.isArray(daten.pruefungen)) leer.pruefungen = daten.pruefungen;
+      if (Array.isArray(daten.pruefungen)) {
+        leer.pruefungen = daten.pruefungen
+          .filter((p) => p && typeof p.datum === "string" &&
+            Number.isInteger(p.punkte) && p.punkte >= 0 && p.punkte <= 100 &&
+            Number.isInteger(p.note) && p.note >= 1 && p.note <= 6)
+          .map((p) => ({ datum: p.datum, punkte: p.punkte, note: p.note }))
+          .slice(0, MAX_PRUEFUNGEN);
+      }
       return leer;
     } catch (e) {
       console.warn("Gespeicherter Fortschritt war unlesbar und wird ignoriert.", e);
@@ -139,14 +161,14 @@
     }
   }
 
-  // Merkt sich eine Antwort und speichert sofort.
-  function antwortMerken(id, istRichtig) {
+  // Merkt sich eine Antwort. Speichert sofort, außer speichern = false.
+  function antwortMerken(id, istRichtig, speichern = true) {
     const e = fortschritt.fragen[id] || { beantwortet: 0, richtig: 0, zuletztRichtig: false };
     e.beantwortet++;
     if (istRichtig) e.richtig++;
     e.zuletztRichtig = istRichtig;
     fortschritt.fragen[id] = e;
-    speichereFortschritt();
+    if (speichern) speichereFortschritt();
   }
 
   let fortschritt = ladeFortschritt();
@@ -324,12 +346,254 @@
     zeigeAnsicht("ende");
   }
 
+  // ---------- Prüfungsmodus ----------
+  const timer = el("timer");
+  const timerZeit = el("timer-zeit");
+  const pZaehler = el("pruefung-zaehler");
+  const pBereich = el("pruefung-bereich");
+  const pText = el("pruefung-text");
+  const pAntworten = el("pruefung-antworten");
+  const pNummern = el("pruefung-nummern");
+  const pOffen = el("pruefung-offen");
+  const btnPZurueck = el("btn-p-zurueck");
+  const btnPWeiter = el("btn-p-weiter");
+
+  let pruefung = null; // { fragen, reihenfolgen, antworten, index, endeZeit, intervall }
+
+  function noteFuer(punkte) {
+    const eintrag = NOTEN.find((n) => punkte >= n[0]);
+    return { note: eintrag[1], text: eintrag[2] };
+  }
+
+  function warnungBeimVerlassen(e) {
+    e.preventDefault();
+    e.returnValue = "";
+  }
+
+  function startePruefung() {
+    let fragen = [];
+    BEREICHE.forEach((b) => {
+      const ausBereich = FRAGEN.filter((f) => f.bereich === b.key);
+      fragen = fragen.concat(mische(ausBereich).slice(0, PRUEFUNG_PRO_BEREICH));
+    });
+    fragen = mische(fragen);
+
+    if (pruefung) clearInterval(pruefung.intervall);
+    pruefung = {
+      fragen: fragen,
+      reihenfolgen: fragen.map(() => mische([0, 1, 2, 3])),
+      antworten: fragen.map(() => null),
+      index: 0,
+      endeZeit: Date.now() + PRUEFUNG_MINUTEN * 60 * 1000,
+      intervall: null
+    };
+    pruefung.intervall = setInterval(tick, 250);
+    window.addEventListener("beforeunload", warnungBeimVerlassen);
+
+    timer.hidden = false;
+    tick();
+    zeigePruefungsfrage(true);
+  }
+
+  function formatiereZeit(ms) {
+    const sekunden = Math.max(0, Math.ceil(ms / 1000));
+    const m = Math.floor(sekunden / 60);
+    const s = sekunden % 60;
+    return String(m).padStart(2, "0") + ":" + String(s).padStart(2, "0");
+  }
+
+  function tick() {
+    if (!pruefung) return;
+    const rest = pruefung.endeZeit - Date.now();
+    timerZeit.textContent = formatiereZeit(rest);
+    timer.classList.toggle("ist-knapp", rest <= KNAPP_MS);
+    if (rest <= 0) pruefungAbgeben(true);
+  }
+
+  function stoppePruefung() {
+    if (!pruefung) return;
+    clearInterval(pruefung.intervall);
+    window.removeEventListener("beforeunload", warnungBeimVerlassen);
+    timer.hidden = true;
+    timer.classList.remove("ist-knapp");
+  }
+
+  // Zeigt die aktuelle Prüfungsfrage. Ohne Rückmeldung zu richtig/falsch.
+  function zeigePruefungsfrage(neueAnsicht) {
+    const i = pruefung.index;
+    const frage = pruefung.fragen[i];
+    const gewaehlt = pruefung.antworten[i];
+
+    pZaehler.textContent = "Frage " + (i + 1) + " von " + pruefung.fragen.length;
+    pBereich.textContent = bereichName(frage.bereich);
+    pText.textContent = frage.frage;
+
+    pAntworten.replaceChildren();
+    pruefung.reihenfolgen[i].forEach((nr) => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "antwort";
+      btn.dataset.nr = String(nr);
+      btn.setAttribute("aria-pressed", String(nr === gewaehlt));
+      if (nr === gewaehlt) btn.classList.add("ist-ausgewaehlt");
+
+      const zeichen = document.createElement("span");
+      zeichen.className = "antwort-zeichen";
+      zeichen.setAttribute("aria-hidden", "true");
+      zeichen.textContent = nr === gewaehlt ? "●" : "○";
+
+      const text = document.createElement("span");
+      text.className = "antwort-text";
+      text.textContent = frage.antworten[nr];
+
+      btn.append(zeichen, text);
+      btn.addEventListener("click", () => waehlePruefungsantwort(nr));
+      pAntworten.appendChild(btn);
+    });
+
+    btnPZurueck.disabled = i === 0;
+    btnPWeiter.disabled = i === pruefung.fragen.length - 1;
+    baueNummern();
+
+    if (neueAnsicht) zeigeAnsicht("pruefung");
+  }
+
+  function baueNummern() {
+    pNummern.replaceChildren();
+    pruefung.fragen.forEach((f, i) => {
+      const beantwortet = pruefung.antworten[i] !== null;
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "nummer";
+      btn.textContent = String(i + 1);
+      btn.setAttribute("aria-label", "Frage " + (i + 1) + (beantwortet ? ", beantwortet" : ", offen"));
+      if (beantwortet) btn.classList.add("ist-beantwortet");
+      if (i === pruefung.index) btn.setAttribute("aria-current", "step");
+      btn.addEventListener("click", () => springeZu(i));
+      pNummern.appendChild(btn);
+    });
+    const offen = anzahlOffen();
+    pOffen.textContent = offen === 0 ? "Alle Fragen beantwortet." : "Noch " + offen + " von " + pruefung.fragen.length + " Fragen offen.";
+  }
+
+  function anzahlOffen() {
+    return pruefung.antworten.filter((a) => a === null).length;
+  }
+
+  function waehlePruefungsantwort(nr) {
+    if (!pruefung) return;
+    pruefung.antworten[pruefung.index] = nr;
+    zeigePruefungsfrage(false);
+    const btn = pAntworten.querySelector('[data-nr="' + nr + '"]');
+    if (btn) btn.focus();
+  }
+
+  function springeZu(i) {
+    if (!pruefung || i < 0 || i >= pruefung.fragen.length) return;
+    pruefung.index = i;
+    zeigePruefungsfrage(true);
+  }
+
+  function pruefungAbgeben(automatisch) {
+    if (!pruefung) return;
+    const offen = anzahlOffen();
+    if (!automatisch && offen > 0 &&
+        !window.confirm("Noch " + offen + (offen === 1 ? " Frage" : " Fragen") + " offen. Trotzdem abgeben?")) {
+      return;
+    }
+    stoppePruefung();
+
+    const gesamt = pruefung.fragen.length;
+    let richtige = 0;
+    pruefung.fragen.forEach((f, i) => {
+      const a = pruefung.antworten[i];
+      if (a === null) return; // offene Fragen zählen nicht für den Fortschritt
+      const ok = a === f.richtig;
+      if (ok) richtige++;
+      antwortMerken(f.id, ok, false);
+    });
+
+    const punkte = Math.round((richtige / gesamt) * 100);
+    const note = noteFuer(punkte);
+    fortschritt.pruefungen.unshift({ datum: new Date().toISOString(), punkte: punkte, note: note.note });
+    fortschritt.pruefungen = fortschritt.pruefungen.slice(0, MAX_PRUEFUNGEN);
+    speichereFortschritt();
+
+    const ergebnis = { fragen: pruefung.fragen, antworten: pruefung.antworten, richtige, gesamt, punkte, note, automatisch };
+    pruefung = null;
+    zeigePruefungsergebnis(ergebnis);
+  }
+
+  function pruefungAbbrechen() {
+    stoppePruefung();
+    pruefung = null;
+  }
+
+  function zeile(klasse, text) {
+    const p = document.createElement("p");
+    p.className = klasse;
+    p.textContent = text;
+    return p;
+  }
+
+  function zeigePruefungsergebnis(e) {
+    el("ergebnis-titel").textContent = e.automatisch ? "Die Zeit ist abgelaufen" : "Prüfung abgegeben";
+    el("ergebnis-punkte").textContent = e.punkte + " Punkte";
+    el("ergebnis-note").textContent = "Note " + e.note.note + " – " + e.note.text;
+    el("ergebnis-richtig").textContent = e.richtige + " von " + e.gesamt + " Fragen richtig";
+
+    const liste = el("auswertung");
+    liste.replaceChildren();
+    e.fragen.forEach((f, i) => {
+      const a = e.antworten[i];
+      const li = document.createElement("li");
+      li.className = "auswertung-eintrag";
+
+      li.appendChild(zeile("auswertung-frage", f.frage));
+      if (a === null) {
+        li.classList.add("ist-offen");
+        li.appendChild(zeile("auswertung-antwort ist-falsch", "✗ Keine Antwort"));
+      } else if (a === f.richtig) {
+        li.classList.add("ist-richtig");
+        li.appendChild(zeile("auswertung-antwort ist-richtig", "✓ Deine Antwort: " + f.antworten[a]));
+      } else {
+        li.classList.add("ist-falsch");
+        li.appendChild(zeile("auswertung-antwort ist-falsch", "✗ Deine Antwort: " + f.antworten[a]));
+      }
+      if (a !== f.richtig) {
+        li.appendChild(zeile("auswertung-loesung", "Richtig: " + f.antworten[f.richtig]));
+      }
+      li.appendChild(zeile("auswertung-erklaerung", f.erklaerung));
+      liste.appendChild(li);
+    });
+
+    zeigeAnsicht("pruefung-ergebnis");
+  }
+
+  function zurStartseite() {
+    if (pruefung) {
+      if (!window.confirm("Prüfung wirklich abbrechen? Sie wird nicht gewertet.")) return;
+      pruefungAbbrechen();
+    }
+    zeigeStart();
+  }
+
   // ---------- Start der App ----------
   pruefeFragen();
   if (!speicherVerfuegbar) hinweisSpeicher.hidden = false;
   baueBereichListe();
 
-  el("btn-home").addEventListener("click", () => zeigeStart());
+  document.addEventListener("visibilitychange", () => {
+    if (!document.hidden) tick();
+  });
+
+  el("btn-home").addEventListener("click", zurStartseite);
+  el("btn-pruefung").addEventListener("click", startePruefung);
+  btnPZurueck.addEventListener("click", () => springeZu(pruefung.index - 1));
+  btnPWeiter.addEventListener("click", () => springeZu(pruefung.index + 1));
+  el("btn-abgeben").addEventListener("click", () => pruefungAbgeben(false));
+  el("btn-neue-pruefung").addEventListener("click", startePruefung);
+  el("btn-ergebnis-start").addEventListener("click", () => zeigeStart());
   el("btn-ueben").addEventListener("click", () => zeigeAnsicht("bereich"));
   el("btn-reset").addEventListener("click", fortschrittZuruecksetzen);
   btnWeiter.addEventListener("click", weiter);

@@ -10,6 +10,9 @@
   <header class="kopf">
     <div class="kopf-innen">
       <span class="marke">Lernwelt</span>
+      <span id="timer" class="timer" hidden>
+        <span class="nur-vorlesen">Restzeit: </span><span id="timer-zeit">15:00</span>
+      </span>
       <button type="button" id="btn-home" class="knopf knopf-kopf">Start</button>
     </div>
   </header>
@@ -25,7 +28,12 @@
       <p class="einleitung">
         Übe für Teil 2 der Abschlussprüfung. Zu jeder Antwort bekommst du sofort eine Erklärung.
       </p>
-      <button type="button" id="btn-ueben" class="knopf knopf-haupt">Üben</button>
+      <div class="knopf-liste">
+        <button type="button" id="btn-ueben" class="knopf knopf-haupt">Üben</button>
+        <button type="button" id="btn-pruefung" class="knopf knopf-zweit"
+                aria-describedby="pruefung-info">Prüfung simulieren</button>
+      </div>
+      <p id="pruefung-info" class="klein">Prüfung: 15 Fragen · 15 Minuten · mit Note</p>
 
       <div class="start-unten">
         <button type="button" id="btn-reset" class="knopf knopf-leise">Fortschritt zurücksetzen</button>
@@ -54,6 +62,47 @@
         <button type="button" id="btn-weiter" class="knopf knopf-haupt"
                 aria-describedby="feedback-ergebnis feedback-erklaerung">Weiter</button>
       </div>
+    </section>
+
+    <!-- Prüfungsmodus -->
+    <section id="ansicht-pruefung" class="ansicht" hidden>
+      <p class="frage-info">
+        <span id="pruefung-zaehler"></span>
+        <span id="pruefung-bereich" class="frage-bereich"></span>
+      </p>
+      <h1 id="pruefung-text" class="frage-text" tabindex="-1"></h1>
+      <div id="pruefung-antworten" class="knopf-liste"></div>
+
+      <div class="navigation">
+        <button type="button" id="btn-p-zurueck" class="knopf knopf-zweit">← Zurück</button>
+        <button type="button" id="btn-p-weiter" class="knopf knopf-zweit">Weiter →</button>
+      </div>
+
+      <nav class="nummern-box" aria-label="Fragenübersicht">
+        <p class="klein" id="pruefung-offen"></p>
+        <div id="pruefung-nummern" class="nummern"></div>
+      </nav>
+
+      <button type="button" id="btn-abgeben" class="knopf knopf-haupt">Abgeben</button>
+    </section>
+
+    <!-- Prüfungsergebnis -->
+    <section id="ansicht-pruefung-ergebnis" class="ansicht" hidden>
+      <h1 id="ergebnis-titel" tabindex="-1"></h1>
+      <div class="ergebnis-karte">
+        <p id="ergebnis-punkte" class="ende-ergebnis"></p>
+        <p id="ergebnis-note" class="ergebnis-note"></p>
+        <p id="ergebnis-richtig"></p>
+      </div>
+      <p class="klein">Das ist eine Übungsnote. Die echte Prüfung hat mehr und andere Aufgaben.</p>
+
+      <div class="knopf-liste">
+        <button type="button" id="btn-neue-pruefung" class="knopf knopf-haupt">Neue Prüfung</button>
+        <button type="button" id="btn-ergebnis-start" class="knopf knopf-zweit">Zur Startseite</button>
+      </div>
+
+      <h2 class="auswertung-titel">Auswertung</h2>
+      <ol id="auswertung" class="auswertung"></ol>
     </section>
 
     <!-- Rundenende -->

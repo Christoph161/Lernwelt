@@ -297,6 +297,167 @@ button:focus-visible {
   margin: 8px 0;
 }
 
+.klein {
+  font-size: 0.9375rem;
+  color: var(--text-leise);
+  margin: 8px 0 0;
+}
+
+/* ---------- Prüfungsmodus ---------- */
+.timer {
+  margin-left: auto;
+  padding: 6px 10px;
+  background: var(--flaeche);
+  color: var(--text);
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 1.125rem;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* Letzte Minute: rote Schrift plus Uhr-Zeichen (nicht nur Farbe) */
+.timer.ist-knapp {
+  color: var(--haupt);
+  box-shadow: inset 0 0 0 2px var(--haupt);
+}
+
+.timer.ist-knapp::before {
+  content: "⏰ ";
+}
+
+.antwort.ist-ausgewaehlt {
+  border-color: var(--text);
+  border-width: 3px;
+  background: var(--neutral-hell);
+  font-weight: 600;
+}
+
+.navigation {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.navigation .knopf {
+  flex: 1;
+}
+
+.knopf:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.nummern-box {
+  margin: 20px 0;
+}
+
+.nummern {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.nummer {
+  min-height: 44px;
+  background: var(--flaeche);
+  color: var(--text);
+  border: 2px solid var(--rand);
+  border-radius: 8px;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.nummer.ist-beantwortet {
+  background: var(--text-leise);
+  border-color: var(--text-leise);
+  color: #fff;
+}
+
+.nummer[aria-current] {
+  outline: 3px solid var(--haupt);
+  outline-offset: 1px;
+}
+
+/* ---------- Prüfungsergebnis ---------- */
+.ergebnis-karte {
+  margin: 8px 0 12px;
+  padding: 16px;
+  background: var(--flaeche);
+  border: 1px solid var(--rand);
+  border-radius: var(--radius);
+}
+
+.ergebnis-karte p {
+  margin: 0 0 4px;
+}
+
+/* Punkte neutral, damit Rot nicht wie „schlecht“ wirkt */
+.ergebnis-karte .ende-ergebnis {
+  color: var(--text);
+}
+
+.ergebnis-note {
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.auswertung-titel {
+  font-size: 1.25rem;
+  margin: 32px 0 12px;
+}
+
+.auswertung {
+  margin: 0;
+  padding-left: 1.5em;
+}
+
+.auswertung-eintrag {
+  margin-bottom: 12px;
+  padding: 12px 14px;
+  background: var(--flaeche);
+  border: 1px solid var(--rand);
+  border-left-width: 6px;
+  border-radius: var(--radius);
+}
+
+.auswertung-eintrag.ist-richtig {
+  border-left-color: var(--gruen);
+}
+
+.auswertung-eintrag.ist-falsch,
+.auswertung-eintrag.ist-offen {
+  border-left-color: var(--rot);
+}
+
+.auswertung-eintrag p {
+  margin: 0 0 6px;
+}
+
+.auswertung-frage {
+  font-weight: 700;
+}
+
+.auswertung-antwort.ist-richtig {
+  color: var(--gruen);
+  font-weight: 600;
+}
+
+.auswertung-antwort.ist-falsch {
+  color: var(--rot);
+  font-weight: 600;
+}
+
+.auswertung-loesung {
+  font-weight: 600;
+}
+
+.auswertung-erklaerung {
+  color: var(--text-leise);
+}
+
 /* Nur für Screenreader sichtbar */
 .nur-vorlesen {
   position: absolute;
