@@ -194,6 +194,8 @@
     document.querySelectorAll(".ansicht").forEach((s) => {
       s.hidden = s.id !== "ansicht-" + name;
     });
+    // Auf der Startseite ist „Start“ überflüssig.
+    el("btn-home").hidden = name === "start";
     window.scrollTo(0, 0);
     if (fokus !== false) {
       const ueberschrift = document.querySelector("#ansicht-" + name + " h1");
@@ -201,19 +203,34 @@
     }
   }
 
-  function erstelleKnopf(text, klasse, beiKlick) {
+  // Erstellt einen Knopf, optional mit kleiner zweiter Zeile.
+  function erstelleKnopf(text, klasse, beiKlick, unterzeile) {
     const btn = document.createElement("button");
     btn.type = "button";
     btn.className = "knopf " + klasse;
     btn.textContent = text;
+    if (unterzeile) {
+      const span = document.createElement("span");
+      span.className = "knopf-unterzeile";
+      span.textContent = unterzeile;
+      btn.appendChild(span);
+    }
     btn.addEventListener("click", beiKlick);
     return btn;
   }
 
   // ---------- Startseite ----------
+  function zeigeLernstand() {
+    const lernstand = el("lernstand");
+    const bearbeitet = FRAGEN.filter((f) => fortschritt.fragen[f.id]).length;
+    lernstand.hidden = bearbeitet === 0;
+    lernstand.textContent = "Du hast schon " + bearbeitet + " von " + FRAGEN.length + " Fragen bearbeitet.";
+  }
+
   function zeigeStart(fokus) {
     runde = null;
     resetMeldung.textContent = "";
+    zeigeLernstand();
     zeigeAnsicht("start", fokus);
   }
 
@@ -222,17 +239,24 @@
       return;
     }
     loescheFortschritt();
+    zeigeLernstand();
     resetMeldung.textContent = "Dein Fortschritt wurde gelöscht.";
   }
 
   // ---------- Bereich wählen ----------
-  function baueBereichListe() {
+  // Wird bei jedem Öffnen neu gebaut, damit die Zahlen aktuell sind.
+  function zeigeBereichAuswahl() {
+    bereichListe.replaceChildren();
     BEREICHE.forEach((b) => {
-      bereichListe.appendChild(erstelleKnopf(b.name, "knopf-zweit", () => starteRunde(b.key)));
+      const s = berechneBereich(b.key);
+      bereichListe.appendChild(erstelleKnopf(b.name, "knopf-zweit knopf-gross", () => starteRunde(b.key),
+        s.bearbeitet + " von " + s.gesamt + " bearbeitet"));
     });
     bereichListe.appendChild(
-      erstelleKnopf("Alle Bereiche gemischt", "knopf-haupt", () => starteRunde("alle"))
+      erstelleKnopf("Alle Bereiche gemischt", "knopf-haupt knopf-gross", () => starteRunde("alle"),
+        RUNDE + " zufällige Fragen")
     );
+    zeigeAnsicht("bereich");
   }
 
   // ---------- Übungsrunde ----------
@@ -259,6 +283,7 @@
     runde.beantwortet = false;
 
     frageZaehler.textContent = "Frage " + (runde.index + 1) + " von " + runde.fragen.length;
+    el("runde-balken").style.width = ((runde.index + 1) / runde.fragen.length) * 100 + "%";
     frageBereich.textContent = bereichName(frage.bereich);
     frageText.textContent = frage.frage;
 
@@ -699,7 +724,6 @@
   // ---------- Start der App ----------
   pruefeFragen();
   if (!speicherVerfuegbar) hinweisSpeicher.hidden = false;
-  baueBereichListe();
 
   document.addEventListener("visibilitychange", () => {
     if (!document.hidden) tick();
@@ -714,7 +738,7 @@
   el("btn-ergebnis-start").addEventListener("click", () => zeigeStart());
   el("btn-fortschritt").addEventListener("click", zeigeFortschritt);
   el("btn-fortschritt-start").addEventListener("click", () => zeigeStart());
-  el("btn-ueben").addEventListener("click", () => zeigeAnsicht("bereich"));
+  el("btn-ueben").addEventListener("click", zeigeBereichAuswahl);
   el("btn-reset").addEventListener("click", fortschrittZuruecksetzen);
   btnWeiter.addEventListener("click", weiter);
   el("btn-nochmal").addEventListener("click", () => starteRunde(runde.auswahl));

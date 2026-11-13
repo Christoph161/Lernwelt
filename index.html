@@ -2,8 +2,11 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="description" content="Prüfungstrainer für Azubis Bankkaufleute: üben, Prüfung simulieren, Fortschritt sehen.">
+  <meta name="theme-color" content="#d50000">
   <title>Lernwelt – Prüfungstrainer Bankkaufleute</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23d50000'/%3E%3Cpath d='M11 7v18h11' stroke='%23fff' stroke-width='4' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -28,13 +31,18 @@
       <p class="einleitung">
         Übe für Teil 2 der Abschlussprüfung. Zu jeder Antwort bekommst du sofort eine Erklärung.
       </p>
+      <p id="lernstand" class="lernstand" hidden></p>
       <div class="knopf-liste">
-        <button type="button" id="btn-ueben" class="knopf knopf-haupt">Üben</button>
-        <button type="button" id="btn-pruefung" class="knopf knopf-zweit"
-                aria-describedby="pruefung-info">Prüfung simulieren</button>
-        <button type="button" id="btn-fortschritt" class="knopf knopf-zweit">Mein Fortschritt</button>
+        <button type="button" id="btn-ueben" class="knopf knopf-haupt knopf-gross">
+          Üben<span class="knopf-unterzeile">10 Fragen mit Erklärung</span>
+        </button>
+        <button type="button" id="btn-pruefung" class="knopf knopf-zweit knopf-gross">
+          Prüfung simulieren<span class="knopf-unterzeile">15 Fragen · 15 Minuten · mit Note</span>
+        </button>
+        <button type="button" id="btn-fortschritt" class="knopf knopf-zweit knopf-gross">
+          Mein Fortschritt<span class="knopf-unterzeile">Stärken und Schwächen ansehen</span>
+        </button>
       </div>
-      <p id="pruefung-info" class="klein">Prüfung: 15 Fragen · 15 Minuten · mit Note</p>
 
       <div class="start-unten">
         <button type="button" id="btn-reset" class="knopf knopf-leise">Fortschritt zurücksetzen</button>
@@ -54,6 +62,7 @@
         <span id="frage-zaehler"></span>
         <span id="frage-bereich" class="frage-bereich"></span>
       </p>
+      <div class="balken balken-duenn" aria-hidden="true"><div id="runde-balken" class="balken-fuellung ist-haupt"></div></div>
       <h1 id="frage-text" class="frage-text" tabindex="-1"></h1>
       <div id="antworten" class="knopf-liste"></div>
 
@@ -132,6 +141,10 @@
       </div>
     </section>
   </main>
+
+  <noscript>
+    <p class="hinweis">Bitte aktiviere JavaScript in deinem Browser, damit die Lernwelt funktioniert.</p>
+  </noscript>
 
   <script src="fragen.js"></script>
   <script src="app.js"></script>

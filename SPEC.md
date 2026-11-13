@@ -131,7 +131,9 @@ Wenn localStorage nicht verfügbar ist (z. B. im privaten Modus), läuft die App
 
 - **Sprache:** Deutsch, einfache und klare Texte, Anrede mit „du“.
 - **Aufbau:** eine einzige Seite (`index.html`). Die Ansichten Start, Üben, Prüfung, Ergebnis und Dashboard werden per JavaScript ein- und ausgeblendet.
-- **Kopfzeile:** App-Name „Lernwelt“ und ein Knopf zurück zur Startseite. Im Prüfungsmodus steht der Timer ebenfalls in der Kopfzeile.
+- **Kopfzeile:** App-Name „Lernwelt“ und ein Knopf zurück zur Startseite (auf der Startseite selbst ausgeblendet). Im Prüfungsmodus steht der Timer ebenfalls in der Kopfzeile. Die Kopfzeile bleibt beim Scrollen oben stehen, damit der Timer immer sichtbar ist.
+- **Startseite:** Drei große Knöpfe mit kurzer Beschreibung in einer zweiten Zeile. Darüber steht der Lernstand („Du hast schon x von 30 Fragen bearbeitet“), sobald es Fortschritt gibt.
+- **Touch:** Hover-Effekte gibt es nur bei Geräten mit Maus. Beim Antippen reagieren Knöpfe sichtbar. Lange Fachwörter werden getrennt.
 - **Responsiv:** funktioniert auf dem Handy (ab 360 px Breite) und am PC. Auf dem Handy liegen die Antworten untereinander, Knöpfe sind mindestens 44 px hoch.
 - **Farben:** Rot als Hauptfarbe (Kopfzeile, Hauptknöpfe), dazu Weiß und neutrales Grau. Kein Logo und kein Name einer echten Bank. Grün für richtig, ein dunkleres Rot für falsch. Informationen werden nie nur über Farbe gezeigt, immer auch mit Zeichen oder Text.
 - **Bedienung:** alles auch mit der Tastatur bedienbar (Tab und Enter). Antworten sind echte Knöpfe (`<button>`).
