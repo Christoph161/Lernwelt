@@ -133,7 +133,7 @@ Wenn localStorage nicht verfügbar ist (z. B. im privaten Modus), läuft die App
 - **Aufbau:** eine einzige Seite (`index.html`). Die Ansichten Start, Üben, Prüfung, Ergebnis und Dashboard werden per JavaScript ein- und ausgeblendet.
 - **Kopfzeile:** App-Name „Lernwelt“ und ein Knopf zurück zur Startseite. Im Prüfungsmodus steht der Timer ebenfalls in der Kopfzeile.
 - **Responsiv:** funktioniert auf dem Handy (ab 360 px Breite) und am PC. Auf dem Handy liegen die Antworten untereinander, Knöpfe sind mindestens 44 px hoch.
-- **Farben:** ruhiges Blau als Hauptfarbe (Bank-Look). Grün für richtig, Rot für falsch. Informationen werden nie nur über Farbe gezeigt, immer auch mit Zeichen oder Text.
+- **Farben:** Rot als Hauptfarbe (Kopfzeile, Hauptknöpfe), dazu Weiß und neutrales Grau. Kein Logo und kein Name einer echten Bank. Grün für richtig, ein dunkleres Rot für falsch. Informationen werden nie nur über Farbe gezeigt, immer auch mit Zeichen oder Text.
 - **Bedienung:** alles auch mit der Tastatur bedienbar (Tab und Enter). Antworten sind echte Knöpfe (`<button>`).
 
 ## 6. Technik und Grenzen

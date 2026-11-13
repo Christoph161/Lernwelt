@@ -1,19 +1,22 @@
 /* Lernwelt – Gestaltung */
 
 :root {
-  --blau: #1d4f91;
-  --blau-dunkel: #153a6b;
-  --blau-hell: #e8eef8;
-  --hintergrund: #f4f6fa;
+  /* Hauptfarbe Rot (Weiß darauf hat Kontrast 5,5:1) */
+  --haupt: #d50000;
+  --haupt-dunkel: #a80000;
+  --haupt-hell: #fdecec;
+  --hintergrund: #f5f5f5;
   --flaeche: #ffffff;
-  --text: #1b2430;
-  --text-leise: #4f5b6b;
-  --rand: #c9d2df;
+  --text: #1f1f1f;
+  --text-leise: #555555;
+  --rand: #d0d0d0;
+  --neutral-hell: #eeeeee;
 
+  /* Richtig / falsch: immer zusammen mit ✓ / ✗ und Text */
   --gruen: #1b6e36;
   --gruen-hell: #e3f3e8;
-  --rot: #b02a20;
-  --rot-hell: #fce9e7;
+  --rot: #9e1a1a;
+  --rot-hell: #fbe4e4;
   --gelb-hell: #fff6d6;
   --gelb-rand: #e0c46a;
 
@@ -42,7 +45,7 @@ body {
 
 /* ---------- Kopfzeile ---------- */
 .kopf {
-  background: var(--blau);
+  background: var(--haupt);
   color: #fff;
 }
 
@@ -114,22 +117,22 @@ h1:focus {
 }
 
 .knopf-haupt {
-  background: var(--blau);
+  background: var(--haupt);
   color: #fff;
 }
 
 .knopf-haupt:hover {
-  background: var(--blau-dunkel);
+  background: var(--haupt-dunkel);
 }
 
 .knopf-zweit {
   background: var(--flaeche);
-  color: var(--blau);
-  border-color: var(--blau);
+  color: var(--haupt);
+  border-color: var(--haupt);
 }
 
 .knopf-zweit:hover {
-  background: var(--blau-hell);
+  background: var(--haupt-hell);
 }
 
 .knopf-leise {
@@ -189,7 +192,7 @@ button:focus-visible {
 
 .frage-bereich {
   font-weight: 600;
-  color: var(--blau);
+  color: var(--haupt);
 }
 
 .frage-text {
@@ -214,9 +217,10 @@ button:focus-visible {
   cursor: pointer;
 }
 
+/* Neutrales Grau beim Hover, damit es nicht wie „falsch“ aussieht */
 .antwort:hover:not(:disabled) {
-  border-color: var(--blau);
-  background: var(--blau-hell);
+  border-color: var(--text-leise);
+  background: var(--neutral-hell);
 }
 
 .antwort:disabled {
@@ -289,7 +293,7 @@ button:focus-visible {
 .ende-ergebnis {
   font-size: 2rem;
   font-weight: 700;
-  color: var(--blau);
+  color: var(--haupt);
   margin: 8px 0;
 }
 
